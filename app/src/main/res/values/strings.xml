@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ULTSoft</string>
+
+    <string name="test_title" translatable="false">More TEXT...</string>
+    <string name="test_string" translatable="false">More TEXT...More TEXT...More TEXT...More TEXT...More TEXT...More TEXT...More TEXT...More TEXT...More TEXT...More TEXT...More TEXT...More TEXT...More TEXT...</string>
+
+    <string name="label_download" >Download image</string>
+    <string name="toast_txt_img_loaded" >Download image saved in UltSoft folder</string>
+
+</resources>
