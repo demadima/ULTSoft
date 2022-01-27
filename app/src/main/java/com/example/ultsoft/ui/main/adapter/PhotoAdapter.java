@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,11 +36,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
-public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
+public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> implements Filterable {
     private final LayoutInflater inflater;
-    private final List<PhotoItems> photoItems;
+    private List<PhotoItems> photoItems;
+    private List<PhotoItems> photoItemsFilter;
     private IPhotoAdapterListener listener;
     private Context context;
 
@@ -46,6 +52,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
         this.context = context;
         this.listener = listener;
         this.photoItems = photoItems;
+        this.photoItemsFilter = photoItems;
         this.inflater = LayoutInflater.from(context);
     }
     @Override
@@ -84,6 +91,45 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder>{
     public int getItemCount() {
         return photoItems.size();
     }
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    Filter filter =  new Filter() {
+
+        //run on background thread
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<PhotoItems> filteredList = new ArrayList<>();
+            // if - search line is empty return full list
+            // else - return a list that contains coincidences
+            if(constraint.toString().isEmpty()){
+                filteredList.addAll(photoItemsFilter);
+            }else {
+                for(PhotoItems photoItem : photoItemsFilter){
+                    if(photoItem.getImageName().toLowerCase().contains(constraint.toString().toLowerCase())){
+                        filteredList.add(photoItem);
+                    }
+                }
+            }
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+
+            return filterResults;
+        }
+
+        //run on UI thread
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            photoItems = (List<PhotoItems>) results.values;
+
+            // update  recycle view
+            notifyDataSetChanged();
+        }
+    };
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivImage;

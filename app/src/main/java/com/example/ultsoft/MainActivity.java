@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.ultsoft.ui.main.adapter.IPhotoAdapterListener;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements IPhotoAdapterList
     private ProgressBar pbPhoto;
     private Disposable photoDisposable = Disposables.empty();
     private ImageView  ivFullScreen;
+    private SearchView svPhoto;
 
     private AssetsUtils assetsUtils;
 
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements IPhotoAdapterList
 
         rvPhoto =  findViewById(R.id.rvPhoto);
         pbPhoto =  findViewById(R.id.pbPhoto);
+        svPhoto = findViewById(R.id.svPhoto);
         ivFullScreen = findViewById(R.id.ivFullScreen);
 
         assetsUtils = new AssetsUtils(this);
@@ -59,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements IPhotoAdapterList
 
         // init activity
         initView();
+
+        //init search
+        initSearchView();
     }
 
     @Override
@@ -97,6 +103,28 @@ public class MainActivity extends AppCompatActivity implements IPhotoAdapterList
                 );
 
     }
+
+    /*
+    * This method initializes search view listener
+     * */
+    private void initSearchView(){
+
+        svPhoto.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            // return list of items which contains the same symbols
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                photoAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
+    };
+
 
     @Override
     public void onStop() {
